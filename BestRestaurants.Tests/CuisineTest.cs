@@ -1,11 +1,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using BestRestaurants.Models;
-using Cuisines.Models;
+using System;
 
 namespace BestRestaurants.Tests
 {
   [TestClass]
-  public class CuisineTest
+  public class CuisineTest : IDisposable
   {
     public CuisineTest()
     {
@@ -20,12 +21,45 @@ namespace BestRestaurants.Tests
       Assert.AreEqual(0, actual);
     }
 
-    // [TestMethod]
-    // public void GetAll_GetAllCuisinesAfterCuisineAdded_CuisineList()
-    // {
-    //   Cuisine newCuisine = new Cuisine("Chinese");
-    //   newCuisine.Save();
-    //
-    //   List<Cuisine> cuisineList
+    [TestMethod]
+    public void Save_SavesCuisineToDataBase_CuisineList()
+    {
+      Cuisine newCuisine = new Cuisine("Chinese");
+      newCuisine.Save();
+
+      List<Cuisine> expectedCuisineList = new List<Cuisine>{newCuisine};
+      List<Cuisine> actualCuisineList = Cuisine.GetAll();
+
+      CollectionAssert.AreEqual(expectedCuisineList, actualCuisineList);
+    }
+
+    [TestMethod]
+    public void Find_FindsCuisineByIdInDatabase_Cuisine()
+    {
+      Cuisine testCuisine = new Cuisine("Chinese");
+      testCuisine.Save();
+
+      Cuisine expected = testCuisine;
+      Cuisine actual = Cuisine.Find(testCuisine.GetId());
+
+      Assert.AreEqual(expected, actual);
+
+    }
+
+    [TestMethod]
+    public void Update_UpdatesNameOfCuisineInDatabase_Cuisine()
+    {
+      Cuisine testCuisine = new Cuisine("Thai");
+      testCuisine.Save();
+      testCuisine.Update("Thai Fusion");
+
+      
+    }
+
+    public void Dispose()
+    {
+      // Restaurant.DeleteAll();
+      Cuisine.DeleteAll();
+    }
   }
 }

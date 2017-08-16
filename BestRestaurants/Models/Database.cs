@@ -1,5 +1,6 @@
 using System;
 using MySql.Data.MySqlClient;
+
 namespace BestRestaurants.Models
 {
   public class DB
