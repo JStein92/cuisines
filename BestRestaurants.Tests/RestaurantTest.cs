@@ -91,6 +91,15 @@ namespace BestRestaurants.Tests
 
     }
 
+    [TestMethod]
+    public void Save_SavesReviewToDatabase_Review()
+    {
+      Review newReview = new Review("Jonathan", 4, "YogurtLand is delish!", 1);
+      newReview.Save();
+
+      Assert.AreEqual(0, 0);
+    }
+
 
     public void Dispose()
     {

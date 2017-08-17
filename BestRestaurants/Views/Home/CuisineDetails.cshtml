@@ -14,15 +14,19 @@
     <input type="text" name="restaurant-name" <input pattern=".{1,}" required title="Minimum 1 character required">
 
     <button type="submit" class="btn btn-success">Add Restaurant</button>
+      <a href="/"><button type="button" class="btn btn-info">Back</button></a>
 
   </form>
-
-      <a href="/"><button type="button" class="btn btn-info">Back</button></a>
 
 
   @foreach(var restaurant in Model.SearchAllRestaurants())
   {
-    <h3><a href="/cuisine-details/@Model.GetId()/edit/@restaurant.GetId()"> @restaurant.GetName()</a></h3>
+    <div class="well">
+    <form action="/cuisine-details/@Model.GetId()/deleted/@restaurant.GetId()" method="post">
+
+    <h3><a href="/cuisine-details/@Model.GetId()/edit/@restaurant.GetId()"> @restaurant.GetName()</a><button type="submit" class="btn btn-danger">Delete</button></h3>
+    </form>
+    </div>
   }
 
 

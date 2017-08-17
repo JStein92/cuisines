@@ -10,11 +10,17 @@ namespace BestRestaurants.Models
     private string _name;
     private int _cuisineId;
 
+    private static string _reviewFilter = "newToOld";
+
     public Restaurant(string name, int cuisineId, int id = 0)
     {
       _id = id;
       _name = name;
       _cuisineId = cuisineId;
+    }
+    public static void SetReviewFilter(string filter)
+    {
+      _reviewFilter = filter;
     }
     public string GetName()
     {
@@ -178,8 +184,55 @@ namespace BestRestaurants.Models
       conn.Close();
     }
 
+    public List<Review> SearchAllReviews()
+    {
+      List<Review> reviewList = new List<Review> {};
+
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      var cmd = conn.CreateCommand() as MySqlCommand;
+
+      if (_reviewFilter == "bestToWorst")
+      {
+        cmd.CommandText = @"SELECT * FROM reviews WHERE restaurant_id = @thisId ORDER BY rating DESC;";
+      }
+      else if (_reviewFilter == "worstToBest")
+      {
+        cmd.CommandText = @"SELECT * FROM reviews WHERE restaurant_id = @thisId ORDER BY rating ASC;";
+      }
+      else if (_reviewFilter == "oldToNew")
+      {
+        cmd.CommandText = @"SELECT * FROM reviews WHERE restaurant_id = @thisId ORDER BY post_time ASC;";
+      }
+      else
+      {
+        cmd.CommandText = @"SELECT * FROM reviews WHERE restaurant_id = @thisId ORDER BY post_time DESC;";
+      }
 
 
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
 
+      var rdr = cmd.ExecuteReader() as MySqlDataReader;
+
+      while(rdr.Read())
+      {
+          int reviewId = rdr.GetInt32(0);
+          string poster = rdr.GetString(1);
+          int rating = rdr.GetInt32(2);
+          string comment = rdr.GetString(3);
+          int restaurantId = rdr.GetInt32(4);
+          DateTime postTime = rdr.GetDateTime(5);
+
+          Review newReview = new Review(poster, rating, comment, restaurantId, reviewId);
+          newReview.SetDateTime(postTime);
+          reviewList.Add(newReview);
+
+      }
+      conn.Close();
+      return reviewList;
+    }
   }
 }

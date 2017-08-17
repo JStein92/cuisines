@@ -3,13 +3,44 @@
 }
 
 <div class="jumbotron">
-  <h1>Edit @Model["restaurant"].GetName() Restaurant Name</h1>
+  <h1>Details for @Model["restaurant"].GetName()</h1>
 </div>
 
-<form class="form-group" method="post" action='cuisine-details/@Model["cuisine"].GetId()/restaurant-edited/@Model["restaurant"].GetId()'>
+<form class="form-group" method="post" action='/cuisine-details/@Model["cuisine"].GetId()/restaurant-edited/@Model["restaurant"].GetId()'>
 
   <label for="updated-restaurant">Update the restaurant name</label>
   <input name="updated-restaurant" type="text">
   <button type="submit" class="btn btn-info">Update</button>
 
 </form>
+
+<form class="form-group" action='/cuisine-details/@Model["cuisine"].GetId()/restaurant-review/@Model["restaurant"].GetId()' method="post">
+<label for="poster">Name:</label>
+<input type="text" name="poster" <input pattern=".{1,}" required title="Minimum 1 character required">
+<label for="rating">Rating:</label>
+<input type="number" name="rating" min="1" max="5">
+<label for="comment">Comments:</label>
+<input type="text" name="comment" <input pattern=".{1,}" required title="Minimum 1 character required">
+<button type="submit" class="btn btn-success">Post Review</button>
+
+</form>
+
+<a href='/cuisine-details/@Model["cuisine"].GetId()/restaurant-review/@Model["restaurant"].GetId()/bestToWorst'><button type="button" class="btn btn-info"name="button">Order Best to Worst</button></a>
+
+<a href='/cuisine-details/@Model["cuisine"].GetId()/restaurant-review/@Model["restaurant"].GetId()/worstToBest'><button type="button" class="btn btn-info"name="button">Order Worst to Best</button></a>
+
+<a href='/cuisine-details/@Model["cuisine"].GetId()/restaurant-review/@Model["restaurant"].GetId()/oldToNew'><button type="button" class="btn btn-info"name="button">Order Old to New</button></a>
+
+<a href='/cuisine-details/@Model["cuisine"].GetId()/restaurant-review/@Model["restaurant"].GetId()/newToOld'><button type="button" class="btn btn-info"name="button">Order New to Old</button></a>
+
+@foreach(var review in @Model["restaurant"].SearchAllReviews())
+{
+  <div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">@review.GetPoster() - @review.GetRating()/5 Posted at: @review.GetPostTime()</h3>
+  </div>
+  <div class="panel-body">
+    <p>@review.GetComment()</p>
+  </div>
+</div>
+}
