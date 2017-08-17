@@ -47,18 +47,84 @@ namespace BestRestaurants.Tests
     }
 
     [TestMethod]
-    public void Update_UpdatesNameOfCuisineInDatabase_Cuisine()
+    public void Update_UpdatesCuisineNameInDatabase_Cuisine()
     {
-      Cuisine testCuisine = new Cuisine("Thai");
+      string name = "Thai";
+      Cuisine testCuisine = new Cuisine(name);
       testCuisine.Save();
-      testCuisine.Update("Thai Fusion");
+      string newName = "Thai Fusion";
 
-      
+      testCuisine.Update(newName);
+
+      string expected = newName;
+      string actual = testCuisine.GetName();
+
+      Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void Delete_DeleteCuisineByIdInDatabase_CuisineList()
+    {
+      Cuisine cuisine1 = new Cuisine("Mexican");
+      Cuisine cuisine2 = new Cuisine("Italian");
+      cuisine1.Save();
+      cuisine2.Save();
+
+      List<Cuisine> expected = new List<Cuisine> {cuisine2};
+      cuisine1.Delete();
+
+      List<Cuisine> actual = Cuisine.GetAll();
+
+      CollectionAssert.AreEqual(expected, actual);
+
+    }
+
+    [TestMethod]
+    public void Delete_DeleteAllResturantsFromSpecificCuisine_RestaurantList()
+    {
+      Cuisine cuisine1 = new Cuisine("Mexican");
+      Cuisine cuisine2 = new Cuisine("Italian");
+      cuisine1.Save();
+      cuisine2.Save();
+
+      Restaurant restaurant1 = new Restaurant("El Camion", cuisine1.GetId());
+      Restaurant restaurant2 = new Restaurant("Hot Mama's Pizza", cuisine2.GetId());
+      restaurant1.Save();
+      restaurant2.Save();
+
+      List<Restaurant> expected = new List<Restaurant> {restaurant2};
+
+      cuisine1.Delete();
+      List<Restaurant> actual = Restaurant.GetAll();
+
+      CollectionAssert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void SearchAllRestaurants_ReturnsAllRestaurantsOfSelectedCuisine_RestaurantList()
+    {
+      Cuisine cuisine1 = new Cuisine("Mexican");
+      cuisine1.Save();
+      Cuisine cuisine2 = new Cuisine("Italian");
+      cuisine1.Save();
+
+      Restaurant restaurant1 = new Restaurant("El Camion", cuisine1.GetId());
+      Restaurant restaurant2 = new Restaurant("Taco Time", cuisine1.GetId());
+      Restaurant restaurant3 = new Restaurant("Hot Mama's Pizza", cuisine2.GetId());
+
+      restaurant1.Save();
+      restaurant2.Save();
+      restaurant3.Save();
+
+      List<Restaurant> actual = cuisine1.SearchAllRestaurants();
+      List<Restaurant> expected = new List<Restaurant>{restaurant1, restaurant2};
+
+      CollectionAssert.AreEqual(expected,actual);
     }
 
     public void Dispose()
     {
-      // Restaurant.DeleteAll();
+      Restaurant.DeleteAll();
       Cuisine.DeleteAll();
     }
   }

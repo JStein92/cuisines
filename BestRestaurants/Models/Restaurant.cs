@@ -137,5 +137,49 @@ namespace BestRestaurants.Models
       conn.Close();
       return foundRestaurant;
     }
+
+    public void Update(string newName)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"UPDATE restaurants SET name = @newName WHERE id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      MySqlParameter name = new MySqlParameter();
+      name.ParameterName = "@newName";
+      name.Value = newName;
+      cmd.Parameters.Add(name);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      _name = newName;
+    }
+
+    public void Delete()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM restaurants WHERE id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+    }
+
+
+
+
   }
 }

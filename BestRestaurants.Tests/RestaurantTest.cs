@@ -57,12 +57,44 @@ namespace BestRestaurants.Tests
       CollectionAssert.AreEqual(expected, actual);
     }
 
-    // [TestMethod]
-    // public void Update_Updates
+    [TestMethod]
+    public void Update_UpdatesRestaurantNameInDatabase_Restaurant()
+    {
+      Restaurant testRestaurant = new Restaurant("Wendys",1);
+      Restaurant testRestaurant2 = new Restaurant("Applebees",2);
+      testRestaurant.Save();
+      testRestaurant2.Save();
+
+      string newName = "McDonalds";
+      testRestaurant.Update(newName);
+
+      string expected = newName;
+      string actual = testRestaurant.GetName();
+
+      Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void Delete_DeleteRestaurantByIdInDatabase_RestaurantList()
+    {
+      Restaurant testRestaurant = new Restaurant("Mexican", 1);
+      Restaurant testRestaurant2 = new Restaurant("Italian", 1);
+      testRestaurant.Save();
+      testRestaurant2.Save();
+
+      List<Restaurant> expected = new List<Restaurant> {testRestaurant};
+      testRestaurant2.Delete();
+
+      List<Restaurant> actual = Restaurant.GetAll();
+
+      CollectionAssert.AreEqual(expected, actual);
+
+    }
+
 
     public void Dispose()
     {
-      // Restaurant.DeleteAll();
+
       Restaurant.DeleteAll();
     }
   }

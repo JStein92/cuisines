@@ -20,6 +20,10 @@ namespace BestRestaurants.Models
     {
       return _id;
     }
+    public string GetName()
+    {
+      return _name;
+    }
 
     public override bool Equals(System.Object otherObject)
     {
@@ -116,6 +120,86 @@ namespace BestRestaurants.Models
 
     }
 
+    public void Update(string newName)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"UPDATE cuisines SET name = @newName WHERE id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      MySqlParameter name = new MySqlParameter();
+      name.ParameterName = "@newName";
+      name.Value = newName;
+      cmd.Parameters.Add(name);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      _name = newName;
+    }
+
+    public void Delete()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM cuisines WHERE id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      cmd.ExecuteNonQuery();
+
+      cmd.CommandText = @"DELETE FROM restaurants WHERE cuisine_id = @thisId;";
+
+      MySqlParameter searchId2 = new MySqlParameter();
+      searchId2.ParameterName = "@thisId";
+      searchId2.Value = _id;
+      cmd.Parameters.Add(searchId2);
+
+      //Console.WriteLine("THIS IS THE SEARCHID2 " + _id);
+      cmd.ExecuteNonQuery();
+      conn.Close();
+    }
+
+    public List<Restaurant> SearchAllRestaurants()
+    {
+      List<Restaurant> newRestaurantList = new List<Restaurant>{};
+
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"SELECT * FROM restaurants WHERE cuisine_id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      var rdr = cmd.ExecuteReader() as MySqlDataReader;
+
+      while(rdr.Read())
+      {
+          int restaurantId = rdr.GetInt32(0);
+          string restaurantName= rdr.GetString(1);
+          int restaurantCuisineId = rdr.GetInt32(2);
+
+          Restaurant newRestaurant = new Restaurant(restaurantName, restaurantCuisineId, restaurantId);
+          newRestaurantList.Add(newRestaurant);
+
+      }
+      conn.Close();
+      return newRestaurantList;
+    }
 
   }
 }

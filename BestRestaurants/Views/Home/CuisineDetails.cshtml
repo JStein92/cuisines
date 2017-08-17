@@ -1,0 +1,29 @@
+@{
+  Layout = "_Layout";
+}
+
+<div class="jumbotron">
+  <h1>@Model.GetName() Restaurants</h1>
+</div>
+
+<div class="container">
+
+  <form class="form-group" action="/cuisine-details/@Model.GetId()" method="post">
+
+    <label for="restaurant-name">Enter a restaurant:</label>
+    <input type="text" name="restaurant-name" <input pattern=".{1,}" required title="Minimum 1 character required">
+
+    <button type="submit" class="btn btn-success">Add Restaurant</button>
+
+  </form>
+
+      <a href="/"><button type="button" class="btn btn-info">Back</button></a>
+
+
+  @foreach(var restaurant in Model.SearchAllRestaurants())
+  {
+    <h3><a href="/cuisine-details/@Model.GetId()/edit/@restaurant.GetId()"> @restaurant.GetName()</a></h3>
+  }
+
+
+</div>

@@ -1,0 +1,15 @@
+@{
+  Layout ="_Layout";
+}
+
+<div class="jumbotron">
+  <h1>Edit @Model["restaurant"].GetName() Restaurant Name</h1>
+</div>
+
+<form class="form-group" method="post" action='cuisine-details/@Model["cuisine"].GetId()/restaurant-edited/@Model["restaurant"].GetId()'>
+
+  <label for="updated-restaurant">Update the restaurant name</label>
+  <input name="updated-restaurant" type="text">
+  <button type="submit" class="btn btn-info">Update</button>
+
+</form>
